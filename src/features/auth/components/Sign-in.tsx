@@ -1,9 +1,10 @@
 "use client";
 
 import { z } from "zod";
+import { FcGoogle } from "react-icons/fc";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FaGoogle ,FaGithub } from "react-icons/fa";
+import {FaGithub } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -45,56 +46,58 @@ export default function SignIn() {
   async function onSubmit(values: SignInFormData) {
     await authClient.signIn.email(
       {
-        email:values.email, 
-      password:values.password,
-      callbackURL:"/"
-      },{
+        email: values.email,
+        password: values.password,
+        callbackURL: "/",
+      },
+      {
         onSuccess: () => {
-          router.push("/")
+          router.push("/");
         },
         onError: (ctx) => {
           toast.error(ctx.error.message);
-        }
-      }
+        },
+      },
     );
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-muted/30 px-4 py-8">
+    <div className="flex items-center justify-center bg-muted/30 ">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-2 text-center">
-          <CardTitle className="text-2xl font-bold">
-            Welcome Back
-          </CardTitle>
+          <CardTitle className="text-2xl font-bold">Welcome Back</CardTitle>
 
-          <CardDescription>
-            Sign in to your account
-          </CardDescription>
+          <CardDescription>Sign in to your account</CardDescription>
         </CardHeader>
 
         <CardContent>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-5"
-          >
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
             <div className="flex flex-col space-y-4">
-                <Button variant="outline" className="w-full"
-                disabled={isPending} type="button">
-                   <FaGithub /> Sign in with Github
-                </Button>
-                <Button variant="outline" className="w-full"
-                disabled={isPending} type="button">
-                    <FaGoogle /> Sign in with Google
-                </Button>
+              <Button
+                variant="outline"
+                className="w-full"
+                disabled={isPending}
+                type="button"
+              >
+              
+                
+                <FaGithub /> Sign in with Github
+              </Button>
+              <Button
+                variant="outline"
+                className="w-full"
+                disabled={isPending}
+                type="button"
+              >
+                <FcGoogle /> Sign in with Google
+              </Button>
             </div>
             <Controller
               control={form.control}
               name="email"
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="email">
-                    Email
-                  </FieldLabel>
+                  <FieldLabel htmlFor="email">Email</FieldLabel>
 
                   <Input
                     {...field}
@@ -116,9 +119,7 @@ export default function SignIn() {
               name="password"
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="password">
-                    Password
-                  </FieldLabel>
+                  <FieldLabel htmlFor="password">Password</FieldLabel>
 
                   <Input
                     {...field}
@@ -135,18 +136,14 @@ export default function SignIn() {
               )}
             />
 
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={isPending}
-            >
+            <Button type="submit" className="w-full" disabled={isPending}>
               {isPending ? "Signing In..." : "Sign In"}
             </Button>
             <div className="text-sm text-center">
-                Don't have an account?{" "}
-                <Link href="/sign-up" className = "underline underline-offset-1">
-                  Sign up
-                </Link>
+              Don't have an account?{" "}
+              <Link href="/sign-up" className="underline underline-offset-1">
+                Sign up
+              </Link>
             </div>
           </form>
         </CardContent>

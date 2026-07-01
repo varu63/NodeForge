@@ -3,8 +3,9 @@
 import { z } from "zod";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FaGithub, FaGoogle } from "react-icons/fa";
+import { FaGithub } from "react-icons/fa";
 import Link from "next/link";
+import { FcGoogle } from "react-icons/fc";
 import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -76,7 +77,7 @@ export default function SignUp() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-muted/30 px-4 py-8">
+    <div className="min-h-screen flex items-center justify-center bg-muted/30 ">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-2 text-center">
           <CardTitle className="text-2xl font-bold">
@@ -110,7 +111,7 @@ export default function SignUp() {
                 disabled={isPending}
                 className="w-full"
               >
-                <FaGoogle className="mr-2 h-4 w-4" />
+                <FcGoogle className="mr-2 h-4 w-4" />
                 Continue with Google
               </Button>
             </div>

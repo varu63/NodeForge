@@ -1,11 +1,9 @@
-import SingIn from '@/features/auth/components/Sign_in'
-import React from 'react'
-
-const page = () => {
+import SignIn from '@/features/auth/components/Sign-in'
+import { requireUnAuth } from "@/lib/auth-utils";
+const page = async() => {
+  await requireUnAuth();
   return (
-    <div>
-      <SingIn/>
-    </div>
+      <SignIn/>
   )
 }
 
