@@ -26,12 +26,12 @@ return next({ctx : {...ctx , auth: session}});
 })
 export const premiumProcedure = protectedProcedure.use(
   async ({ctx , next}) =>{
-    const customer = await polarClient.customers.getStateExteranal({
+    const customer = await polarClient.customers.getStateExternal({
       externalId: ctx.auth.user.id
     })
     if(
-      !customer.activeSubscription ||
-      customer.activeSubscription.length === 0
+      !customer.activeSubscriptions ||
+      customer.activeSubscriptions.length === 0
     ){
    throw new TRPCError({
       code:"FORBIDDEN",
