@@ -7,7 +7,7 @@ import {
 } from "@/trpc/init";
 import z from "zod";
 import { PAGINATION } from "@/config/constants";
-import { contains } from "@base-ui/react/internals/shadowDom";
+
 
 export const workflowsRouter = createTRPCRouter({
   create: premiumProcedure.mutation(({ ctx }) => {
@@ -58,12 +58,13 @@ export const workflowsRouter = createTRPCRouter({
       }),
     )
     .query(({ ctx, input }) => {
-      return prisma.workflow.findUnique({
+      return prisma.workflow.findUniqueOrThrow({
         where: {
           id: input.id,
           userId: ctx.auth.user.id,
         },
       });
+      
     }),
 
   getAll: protectedProcedure

@@ -30,3 +30,50 @@ export const useCreateWorkflow =()=>{
         })
     )
 }
+
+export const useRemoveWorkflow =() =>{
+    const queryClient = useQueryClient();
+    const trpc = useTRPC();
+    return useMutation(
+        trpc.workflows.remove.mutationOptions({
+            onSuccess(data) {
+                toast.success(`Workflow"${data.name}" removed`)
+                queryClient.invalidateQueries(trpc.workflows.getAll.queryOptions({}))
+                queryClient.invalidateQueries(
+                    trpc.workflows.getOne.queryFilter({id: data.id})
+                )
+                
+            },
+        })
+    )
+
+}
+
+export const useSupenseWorkflow = (id: string) =>{
+    const trpc = useTRPC()
+    return useSuspenseQuery(trpc.workflows.getOne.queryOptions({id}))
+}
+
+// Hooks for update the workflow name
+export const useUpdateWorkflowsName=()=>{
+    const queryClient = useQueryClient();
+    const trpc = useTRPC();
+
+    return useMutation(
+        trpc.workflows.updateName.mutationOptions({
+            onSuccess:(data)=>{
+                toast.success(`Workflow "${data.name}" updated`);
+                queryClient.invalidateQueries
+                (
+                    trpc.workflows.getAll.queryOptions({})
+                );
+                queryClient.invalidateQueries(
+                    trpc.workflows.getOne.queryOptions({id: data.id})
+                )
+            },
+            onError:(error)=>{
+                toast.error(`Failed to update workflow name: ${error.message}`);
+            }
+        })
+    )
+}
