@@ -35,55 +35,58 @@ import z from "zod";
 import { useEffect } from "react";
 
 const formSchema = z.object({
-  endpoint: z.url({
-    message: "Please enter the valid URL",
+  variableName : z.string().min(1,{message: "Variavle name is required"})
+  .regex(/^[A-Za-z_$][A-Za-z0-9_$]*$/,{
+    message:" Variable name must start with a letter or underscore and container only letters , numbers, and underscores"
   }),
+  endpoint: z.string().min(1,({
+    message: "Please enter the valid URL",
+  })),
   method: z.enum(["GET", "POST", "PUT", "PATCH", "DELETE"]),
   body: z.string().optional(),
 });
-export type fromType= z.infer<typeof formSchema>
+
+
+export type HttpRequestFormValues= z.infer<typeof formSchema>
+
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSubmit: (value: z.infer<typeof formSchema>) => void;
-  defaultEndpoint?: string;
-  defaultMethod?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
-  defaultBody?: string;
+  defaultValues?: Partial<HttpRequestFormValues>
 }
 
 export const HTTPRequestDialog = ({
   open,
   onOpenChange,
   onSubmit,
-  defaultEndpoint = "",
-  defaultMethod = "GET",
-  defaultBody = "",
+  defaultValues ={}
 }: Props) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      endpoint: defaultEndpoint,
-      method: defaultMethod,
-      body: defaultBody,
+      variableName: defaultValues.variableName || "",
+      endpoint: defaultValues.endpoint || "",
+      method: defaultValues.method || "GET",
+      body: defaultValues.body || "",
     },
   });
 
   useEffect(() => {
   if (open) {
     form.reset({
-      endpoint: defaultEndpoint,
-      method: defaultMethod,
-      body: defaultBody,
+      variableName: defaultValues.variableName || "",
+      endpoint: defaultValues.endpoint || "",
+      method: defaultValues.method || "GET",
+      body: defaultValues.body || "",
     });
   }
 }, [
   open,
-  defaultEndpoint,
-  defaultMethod,
-  defaultBody,
+  defaultValues,
   form,
 ]);
-
+  const watchVariableName = form.watch("variableName")|| "myApiCall"
   const watchMethod = form.watch("method");
 
   const showBodyField = ["POST", "PUT", "PATCH"].includes(watchMethod);
@@ -108,6 +111,34 @@ export const HTTPRequestDialog = ({
           onSubmit={form.handleSubmit(handleSubmit)}
           className="space-y-6"
         >
+          {/* variable name */}
+          <Controller
+            control={form.control}
+            name="variableName"
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor={field.name}>
+                  Variable Name
+                </FieldLabel>
+
+                <Input
+                  {...field}
+                  id={field.name}
+                  placeholder="My api call"
+                  aria-invalid={fieldState.invalid}
+                />
+
+                <FieldDescription>
+                  Use this name to reference the result in other nodes:{' '}
+                  {`{{${watchVariableName}.httpResponse.data}}`}
+                </FieldDescription>
+
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
           {/* Method */}
           <Controller
             control={form.control}
@@ -194,7 +225,13 @@ export const HTTPRequestDialog = ({
                   <Textarea
                     {...field}
                     id={field.name}
-                    placeholder='{"key": "value"}'
+                    placeholder='
+                    {"key": "value",
+                    "userId" : "{{httpResponse.data.id}}",
+                    "name" : "{{httpResponse.data.name}},
+
+                    }
+                    '
                     aria-invalid={fieldState.invalid}
                     className="min-h-32 font-mono"
                   />
