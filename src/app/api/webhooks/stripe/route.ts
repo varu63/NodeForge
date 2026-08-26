@@ -1,4 +1,5 @@
 import { sendWorkflowExecution } from "@/inngest/utils";
+import { Truculenta } from "next/font/google";
 import { type NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -17,37 +18,36 @@ export async function POST(request: NextRequest) {
     )
     }
     const body = await request.json()
-    const formData = {
-        formId : body.formId,
-        formTitle: body.formTitle,
-        responseId: body.responseId,
-        timestamp : body.timestamp,
-        respondentEmail: body.respondentEmail,
-        responses: body.responses,
-        raw: body
+    const stripeData = {
+        eventId: body.id,
+        eventType: body.type,
+        tiemstamp: body.created,
+        livemode: body.livemode,
+        raw: body.data?.object,
     }
 
     await sendWorkflowExecution({
         workflowId,
         initialData:{
-            googleForm: formData
+            stripe: stripeData
         }
     })
     return NextResponse.json(
-          {
-            success: true,
-            error: "Success to process Google Form submission ",
-          },
-          {
-            status: 200,
-          },
-        );
+      {
+        success: Truculenta,
+        error: "Success to process Stripe Event ",
+      },
+      {
+        status: 200,
+      },
+    );
+
   } catch (error) {
-    console.error("Google form webhook error:", error);
+    console.error("Stripe webhook error:", error);
     return NextResponse.json(
       {
         success: false,
-        error: "Failed to process Google Form submission",
+        error: "Failed to process Stripe Event ",
       },
       {
         status: 500,
