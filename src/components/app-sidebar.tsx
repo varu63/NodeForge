@@ -33,7 +33,7 @@ const menuItems = [
       {
         title: "Workflows",
         icon: FolderOpenIcon,
-        url: "/workflows",
+        url: "/workflow",
       },
       {
         title: "Credentials",
