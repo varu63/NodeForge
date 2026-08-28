@@ -63,6 +63,18 @@ const executionNodes: NodeTypeOption[] = [
         description: "Udes Google to Generated text",
         icon: "/gemini.svg",
     },
+    {
+        type: NodeType.DISCORD,
+        label: "Discord",
+        description: "Send the Message to Discord",
+        icon: "/discord.svg",
+    },
+    {
+        type: NodeType.SLACK,
+        label: "Slack",
+        description: "Send the Message to Slack",
+        icon: "/slack.svg",
+    },
 ]
 
 interface NodeSelectorProps {
