@@ -42,7 +42,19 @@ export default function SignIn() {
   });
 
   const isPending = form.formState.isSubmitting;
+ const signInGithub = async () => {
+  await authClient.signIn.social({
+    provider: "github",
+    callbackURL: "/",
+  });
+};
 
+const signInGoogle = async () => {
+  await authClient.signIn.social({
+    provider: "google",
+    callbackURL: "/",
+  });
+};
   async function onSubmit(values: SignInFormData) {
     await authClient.signIn.email(
       {
@@ -78,9 +90,8 @@ export default function SignIn() {
                 className="w-full"
                 disabled={isPending}
                 type="button"
+                onClick={signInGithub}
               >
-              
-                
                 <FaGithub /> Sign in with Github
               </Button>
               <Button
@@ -88,6 +99,7 @@ export default function SignIn() {
                 className="w-full"
                 disabled={isPending}
                 type="button"
+                 onClick={signInGoogle}
               >
                 <FcGoogle /> Sign in with Google
               </Button>

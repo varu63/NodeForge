@@ -37,11 +37,6 @@ import { useCredentialsByType } from "@/features/credentials/hooks/use-credentia
 import { CredentialType } from "@/generated/prisma";
 import Image from "next/image";
 
-export const AVAILABLE_MODELS = [
-  "gemini-3.5-flash-lite",
-  "gemini-3.5-flash",
-] as const;
-
 const formSchema = z.object({
   variableName: z
     .string()
@@ -50,7 +45,6 @@ const formSchema = z.object({
       message:
         " Variable name must start with a letter or underscore and container only letters , numbers, and underscores",
     }),
-  model: z.enum(AVAILABLE_MODELS),
   credentialId: z.string().min(1, "Credential is required"),
   systemPrompt: z.string().optional(),
   userPrompt: z.string().min(1, "User prompt is required"),
@@ -78,7 +72,6 @@ export const GeminiDialog = ({
     defaultValues: {
       variableName: defaultValues.variableName || "",
       credentialId: defaultValues.credentialId || "",
-      model: defaultValues.model || AVAILABLE_MODELS[0],
       systemPrompt: defaultValues.systemPrompt || "",
       userPrompt: defaultValues.userPrompt || "",
     },
@@ -89,7 +82,6 @@ export const GeminiDialog = ({
       form.reset({
         variableName: defaultValues.variableName || "",
         credentialId: defaultValues.credentialId || "",
-        model: defaultValues.model || AVAILABLE_MODELS[0],
         systemPrompt: defaultValues.systemPrompt || "",
         userPrompt: defaultValues.userPrompt || "",
       });
@@ -132,41 +124,6 @@ export const GeminiDialog = ({
                 <FieldDescription>
                   Use this name to reference the result in other nodes:{" "}
                   {`{{${watchVariableName}.text}}`}
-                </FieldDescription>
-
-                {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
-                )}
-              </Field>
-            )}
-          />
-
-          {/* model*/}
-          <Controller
-            control={form.control}
-            name="model"
-            render={({ field, fieldState }) => (
-              <Field data-invalid={fieldState.invalid}>
-                <FieldLabel htmlFor={field.name}>Model</FieldLabel>
-
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <SelectTrigger
-                    id={field.name}
-                    aria-invalid={fieldState.invalid}
-                    className="w-full"
-                  >
-                    <SelectValue placeholder="Select a model" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {AVAILABLE_MODELS.map((model) => (
-                      <SelectItem key={model} value={model}>
-                        {model}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FieldDescription>
-                  The Google Gemini model to use for completeion
                 </FieldDescription>
 
                 {fieldState.invalid && (

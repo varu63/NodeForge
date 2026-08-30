@@ -18,7 +18,6 @@ import {
 } from "@/components/ui/card";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-// import { router } from "better-auth/api";
 import { useRouter } from "next/navigation";
 
 
@@ -57,7 +56,19 @@ export default function SignUp() {
   });
 
   const isPending = form.formState.isSubmitting;
+  const signInGithub = async () => {
+  await authClient.signIn.social({
+    provider: "github",
+    callbackURL: "/",
+  });
+};
 
+const signInGoogle = async () => {
+  await authClient.signIn.social({
+    provider: "google",
+    callbackURL: "/",
+  });
+};
   async function onSubmit(values: SignUpFormData) {
     await authClient.signUp.email({
       name: values.name,
@@ -100,6 +111,7 @@ export default function SignUp() {
                 type="button"
                 disabled={isPending}
                 className="w-full"
+                onClick={signInGithub}
               >
                 <FaGithub className="mr-2 h-4 w-4" />
                 Continue with GitHub
@@ -110,6 +122,7 @@ export default function SignUp() {
                 type="button"
                 disabled={isPending}
                 className="w-full"
+                onClick={signInGoogle}
               >
                 <FcGoogle className="mr-2 h-4 w-4" />
                 Continue with Google
