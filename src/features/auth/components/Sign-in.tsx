@@ -43,9 +43,9 @@ export default function SignIn() {
   });
 
   const isPending = form.formState.isSubmitting;
-  const [pendingProvider, setPendingProvider] = useState<"github" | "google" | null>(
-    null,
-  );
+  const [pendingProvider, setPendingProvider] = useState<
+    "github" | "google" | null
+  >(null);
   const isSocialPending = pendingProvider !== null;
 
   const signInGithub = async () => {
@@ -90,102 +90,96 @@ export default function SignIn() {
   }
 
   return (
-    <div className="flex items-center justify-center bg-muted/30 ">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-2 text-center">
-          <CardTitle className="text-2xl font-bold">Welcome Back</CardTitle>
+    <Card className="w-full">
+      <CardHeader className="space-y-2 text-center">
+        <CardTitle className="text-2xl font-bold">Welcome Back</CardTitle>
 
-          <CardDescription>Sign in to your account</CardDescription>
-        </CardHeader>
+        <CardDescription>Sign in to your account</CardDescription>
+      </CardHeader>
 
-        <CardContent>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-            <div className="flex flex-col space-y-4">
-              <Button
-                variant="outline"
-                className="w-full"
-                disabled={isPending || isSocialPending}
-                type="button"
-                onClick={signInGithub}
-              >
-                <FaGithub />{" "}
-                {pendingProvider === "github"
-                  ? "Redirecting..."
-                  : "Sign in with Github"}
-              </Button>
-              <Button
-                variant="outline"
-                className="w-full"
-                disabled={isPending || isSocialPending}
-                type="button"
-                 onClick={signInGoogle}
-              >
-                <FcGoogle />{" "}
-                {pendingProvider === "google"
-                  ? "Redirecting..."
-                  : "Sign in with Google"}
-              </Button>
-            </div>
-            <Controller
-              control={form.control}
-              name="email"
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="email">Email</FieldLabel>
-
-                  <Input
-                    {...field}
-                    id="email"
-                    type="email"
-                    placeholder="Enter your email"
-                    aria-invalid={fieldState.invalid}
-                  />
-
-                  {fieldState.error && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
-
-            <Controller
-              control={form.control}
-              name="password"
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="password">Password</FieldLabel>
-
-                  <Input
-                    {...field}
-                    id="password"
-                    type="password"
-                    placeholder="Enter your password"
-                    aria-invalid={fieldState.invalid}
-                  />
-
-                  {fieldState.error && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
-
+      <CardContent>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+          <div className="flex flex-col space-y-4">
             <Button
-              type="submit"
+              variant="outline"
               className="w-full"
               disabled={isPending || isSocialPending}
+              type="button"
+              onClick={signInGithub}
             >
-              {isPending ? "Signing In..." : "Sign In"}
+              <FaGithub />{" "}
+              {pendingProvider === "github"
+                ? "Redirecting..."
+                : "Sign in with Github"}
             </Button>
-            <div className="text-sm text-center">
-              Don't have an account?{" "}
-              <Link href="/sign-up" className="underline underline-offset-1">
-                Sign up
-              </Link>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
-    </div>
+            <Button
+              variant="outline"
+              className="w-full"
+              disabled={isPending || isSocialPending}
+              type="button"
+              onClick={signInGoogle}
+            >
+              <FcGoogle />{" "}
+              {pendingProvider === "google"
+                ? "Redirecting..."
+                : "Sign in with Google"}
+            </Button>
+          </div>
+          <Controller
+            control={form.control}
+            name="email"
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor="email">Email</FieldLabel>
+
+                <Input
+                  {...field}
+                  id="email"
+                  type="email"
+                  placeholder="Enter your email"
+                  aria-invalid={fieldState.invalid}
+                />
+
+                {fieldState.error && <FieldError errors={[fieldState.error]} />}
+              </Field>
+            )}
+          />
+
+          <Controller
+            control={form.control}
+            name="password"
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor="password">Password</FieldLabel>
+
+                <Input
+                  {...field}
+                  id="password"
+                  type="password"
+                  placeholder="Enter your password"
+                  aria-invalid={fieldState.invalid}
+                />
+
+                {fieldState.error && <FieldError errors={[fieldState.error]} />}
+              </Field>
+            )}
+          />
+
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={isPending || isSocialPending}
+          >
+            {isPending ? "Signing In..." : "Sign In"}
+          </Button>
+          <div className="text-sm text-center">
+            Don't have an account?{" "}
+            <Link href="/sign-up" className="underline underline-offset-1">
+              Sign up
+            </Link>
+          </div>
+        </form>
+      </CardContent>
+    </Card>
   );
 }
