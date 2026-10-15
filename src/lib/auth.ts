@@ -1,36 +1,49 @@
-import { betterAuth } from "better-auth";
+import { type BetterAuthOptions, betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import prisma from "./db";
 
-const REQUIRED_ENV_VARS = [
-  "DATABASE_URL",
-  "BETTER_AUTH_SECRET",
+const isNextBuild = process.env.NEXT_PHASE === "phase-production-build";
+
+const FATAL_ENV_VARS = ["DATABASE_URL", "BETTER_AUTH_SECRET"] as const;
+
+const OPTIONAL_ENV_VARS = [
   "BETTER_AUTH_URL",
+  "NEXT_PUBLIC_APP_URL",
   "GITHUB_CLIENT_ID",
   "GITHUB_CLIENT_SECRET",
   "GOOGLE_CLIENT_ID",
   "GOOGLE_CLIENT_SECRET",
 ] as const;
 
-const isNextBuild = process.env.NEXT_PHASE === "phase-production-build";
+function isBlank(name: string) {
+  const value = process.env[name];
+  return value === undefined || value.trim() === "";
+}
 
-function assertRequiredEnv() {
-  const missing = REQUIRED_ENV_VARS.filter((name) => {
-    const value = process.env[name];
-    return value === undefined || value.trim() === "";
-  });
+function checkAuthEnv() {
+  const missingFatal = FATAL_ENV_VARS.filter(isBlank);
 
-  if (missing.length > 0) {
+  if (missingFatal.length > 0) {
     throw new Error(
-      `[auth] Missing required environment variable(s): ${missing.join(
+      `[auth] Missing required environment variable(s): ${missingFatal.join(
         ", ",
       )}. Set them locally in .env and in Vercel (Project Settings → Environment Variables), then redeploy.`,
+    );
+  }
+
+  const missingOptional = OPTIONAL_ENV_VARS.filter(isBlank);
+
+  if (missingOptional.length > 0) {
+    console.warn(
+      `[auth] Environment variable(s) not set: ${missingOptional.join(
+        ", ",
+      )}. These are not fatal, but the related features (for example social sign-in) stay disabled until they are configured.`,
     );
   }
 }
 
 if (!isNextBuild) {
-  assertRequiredEnv();
+  checkAuthEnv();
 }
 
 const productionURL =
@@ -47,6 +60,22 @@ const trustedOrigins = [
   process.env.NEXT_PUBLIC_APP_URL,
 ].filter((origin): origin is string => Boolean(origin));
 
+const socialProviders: NonNullable<BetterAuthOptions["socialProviders"]> = {};
+
+if (!isBlank("GITHUB_CLIENT_ID") && !isBlank("GITHUB_CLIENT_SECRET")) {
+  socialProviders.github = {
+    clientId: process.env.GITHUB_CLIENT_ID as string,
+    clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
+  };
+}
+
+if (!isBlank("GOOGLE_CLIENT_ID") && !isBlank("GOOGLE_CLIENT_SECRET")) {
+  socialProviders.google = {
+    clientId: process.env.GOOGLE_CLIENT_ID as string,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+  };
+}
+
 export const auth = betterAuth({
   baseURL: productionURL,
   secret: process.env.BETTER_AUTH_SECRET,
@@ -58,16 +87,7 @@ export const auth = betterAuth({
     enabled: true,
     autoSignIn: true,
   },
-  socialProviders: {
-    github: {
-      clientId: process.env.GITHUB_CLIENT_ID as string,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
-    },
-    google: {
-      clientId: process.env.GOOGLE_CLIENT_ID as string,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-    },
-  },
+  socialProviders,
   logger: {
     level: "error",
     disabled: false,
