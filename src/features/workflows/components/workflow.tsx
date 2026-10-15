@@ -1,7 +1,6 @@
 "use client"
 import { EntityContainer, EntityHeader, EntityPagination, EntitySearch, ErrorView, LoadingView, EmptyView , EntityList, EntityItem} from "@/components/entity-components"
 import{useCreateWorkflow, useRemoveWorkflow, useSupspenseWorkflows} from "@/features/workflows/hooks/use-workflows"
-import { useUpgradeModal } from "@/hooks/use-upgrade-modal"
 import { useRouter } from "next/navigation"
 import { useWrokflowsParams } from "../hooks/use-workflows-params"
 import { useEntitySearch } from "@/hooks/use-entity-search"
@@ -38,21 +37,15 @@ export const Workflowlist = () => {
 
 export const WorkflowsHeader =({disabled}:{disabled?:boolean})=>{
    const createWorkflow = useCreateWorkflow()
-   const {handleError , model} = useUpgradeModal()
    const router = useRouter();
    const handleCreate = ()=>{
     createWorkflow.mutate(undefined ,{
       onSuccess:(data) =>{
           router.push(`/workflows/${data.id}`)
-      },
-      onError :(error) =>{
-        handleError(error)
       }
     })
    }
   return(
-    <>
-    {model}
     <EntityHeader
     title = "Workflows"
     description = "Manage your workflows"
@@ -61,7 +54,6 @@ export const WorkflowsHeader =({disabled}:{disabled?:boolean})=>{
     disabled = {disabled}
     isCreating = {createWorkflow.isPending}
     />
-    </>
   )
 }
 export const WorkflowsPagination =() =>{
@@ -103,25 +95,18 @@ export const WorkflowsError =()=>{
 export const WorkflowsEmpty = ()=>{
   const router = useRouter()
   const createWorkflow = useCreateWorkflow()
-  const {handleError , model} = useUpgradeModal()
   const handelCreate = ()=>{
     createWorkflow.mutate(undefined , {
-      onError: (error)=>{
-        handleError(error)
-      },
       onSuccess:(data) =>{
         router.push(`/workflows/${data.id}`)
       }
     })
   }
   return(
-    <> 
-    {model}
     <EmptyView 
     onNew={handelCreate}
     message ="You haven't created any workflows yet, Get started by
     creating your first workflow"/>
-    </>
   )
 }
 

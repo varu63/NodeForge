@@ -12,7 +12,6 @@ import {
   useSupenseCredential,
   useUpdateCredential,
 } from "../hooks/use-credentials";
-import { useUpgradeModal } from "@/hooks/use-upgrade-modal";
 
 import {
   Card,
@@ -69,7 +68,6 @@ interface CredentialFormProps {
 
 export const CredentialForm = ({ initialData }: CredentialFormProps) => {
   const router = useRouter();
-  const { handleError } = useUpgradeModal();
 
   const createCredential = useCreateCredentials();
   const updateCredential = useUpdateCredential();
@@ -102,7 +100,6 @@ export const CredentialForm = ({ initialData }: CredentialFormProps) => {
           onSuccess: (data) => {
             router.push(`/credentials/${data.id}`);
           },
-          onError: handleError,
         });
       }
 

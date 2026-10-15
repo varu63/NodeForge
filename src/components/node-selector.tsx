@@ -80,7 +80,7 @@ const executionNodes: NodeTypeOption[] = [
 interface NodeSelectorProps {
     open: boolean
     onOpenChange: (open: boolean) => void
-    children: React.ReactNode
+    children: React.ReactElement
 }
 
 export function NodeSelector({
@@ -132,9 +132,7 @@ export function NodeSelector({
     ])
     return (
         <Sheet open={open} onOpenChange={onOpenChange}>
-            <SheetTrigger asChild>
-                {children}
-            </SheetTrigger>
+            <SheetTrigger render={children} />
 
             <SheetContent
                 side="right"

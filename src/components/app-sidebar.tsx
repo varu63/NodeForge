@@ -4,8 +4,6 @@ import {
   FolderOpenIcon,
   HistoryIcon,
   KeyIcon,
-  StarIcon,
-  CreditCardIcon,
   LogOutIcon,
 } from "lucide-react";
 import Link from "next/link";
@@ -24,7 +22,6 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import {authClient} from "@/lib/auth-client"
-import { useHasActiveSubscription } from "@/features/payment/hooks/use-payment";
 
 const menuItems = [
   {
@@ -52,7 +49,6 @@ const menuItems = [
 export function AppSidebar() {
     const router = useRouter();
     const pathname = usePathname();
-    const {hasActiveSubscription , isLoading} = useHasActiveSubscription();
   return (
     <Sidebar collapsible="icon">
         <SidebarHeader>
@@ -96,32 +92,6 @@ export function AppSidebar() {
         ))}
       </SidebarContent>
       <SidebarFooter>
-         {!hasActiveSubscription && !isLoading && (
-        <SidebarMenuItem>
-         
-            <SidebarMenuButton
-            tooltip = "Upgrade to Pro"
-            className="h-10 w-full gap-4 px-4"
-            onClick={()=> authClient.checkout({slug:"pro"})}
-            >
-                <StarIcon className="h-4 w-4" />
-                <span>Upgrade to Pro</span>
-
-            </SidebarMenuButton>
-    
-        </SidebarMenuItem>
-         )}
-        <SidebarMenuItem>
-            <SidebarMenuButton
-            tooltip = "Billing Portal"
-            className="h-10 w-full gap-4 px-4"
-            onClick={()=> authClient.customer.portal()}
-            >
-                <CreditCardIcon className="h-4 w-4" />
-                <span>Billing Portal</span>
-
-            </SidebarMenuButton>
-        </SidebarMenuItem>
         <SidebarMenuItem>
             <SidebarMenuButton
             tooltip = "Logout"

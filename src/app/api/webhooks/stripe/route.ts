@@ -1,5 +1,4 @@
 import { sendWorkflowExecution } from "@/inngest/utils";
-import { Truculenta } from "next/font/google";
 import { type NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -34,7 +33,7 @@ export async function POST(request: NextRequest) {
     })
     return NextResponse.json(
       {
-        success: Truculenta,
+        success: true,
         error: "Success to process Stripe Event ",
       },
       {

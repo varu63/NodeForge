@@ -127,18 +127,20 @@ export const ExecutionView = ({ executionId }: { executionId: string }) => {
               </div>
               {execution.errorStack &&(
                 <Collapsible open={showStackTrace} onOpenChange={setShowStackTrace}>
-                <CollapsibleTrigger asChild>
-                <Button
-                variant="ghost"
-                size= "sm"
-                className="text-red-900 hover:bg-red-100"
+                <CollapsibleTrigger
+                render={
+                    <Button
+                    variant="ghost"
+                    size= "sm"
+                    className="text-red-900 hover:bg-red-100"
+                    />
+                }
                 >
                     {
                         showStackTrace
                         ? "Hide stack trace"
                         : "Show stack trace"
                     }
-                </Button>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
                 <pre className="text-xs font-mono text-red-800 overflow-auto mt-2 p-2 bg-red-100 rounded">

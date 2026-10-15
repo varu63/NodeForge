@@ -2,10 +2,18 @@
   "name": "project",
   "version": "0.1.0",
   "private": true,
+  "allowScripts": {
+    "@prisma/client": true,
+    "@prisma/engines": true,
+    "prisma": true,
+    "esbuild": true,
+    "protobufjs": true
+  },
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "next start",
+    "postinstall": "prisma generate",
     "lint": "biome check",
     "format": "biome format --write"
   },
@@ -16,8 +24,6 @@
     "@hookform/resolvers": "^5.4.0",
     "@inngest/realtime": "^0.4.7",
     "@paralleldrive/cuid2": "^3.3.0",
-    "@polar-sh/better-auth": "^1.8.4",
-    "@polar-sh/sdk": "^0.47.1",
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^6.19.3",
     "@tanstack/react-query": "^5.101.0",
