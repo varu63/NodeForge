@@ -36,19 +36,25 @@ export const executionsRouter = createTRPCRouter({
     .input(
       z.object({
         page: z.number().default(PAGINATION.DEFAULT_PAGE),
-        pagesize: z
-          .number()
-          .min(PAGINATION.MIN_PAGE_SIZE)
-          .max(PAGINATION.MAX_PAGE_SIZE)
-          .default(PAGINATION.DEFAULT_PAGE_SIZE),
+        pageSize: z.number().default(PAGINATION.DEFAULT_PAGE_SIZE),
       }),
     )
     .query(async ({ ctx, input }) => {
-      const { page, pagesize,} = input;
+      const page = Math.max(
+        1,
+        Math.trunc(input.page) || PAGINATION.DEFAULT_PAGE,
+      );
+      const pageSize = Math.min(
+        Math.max(
+          PAGINATION.MIN_PAGE_SIZE,
+          Math.trunc(input.pageSize) || PAGINATION.DEFAULT_PAGE_SIZE,
+        ),
+        PAGINATION.MAX_PAGE_SIZE,
+      );
       const [items, totalCount] = await Promise.all([
         prisma.execution.findMany({
-          skip: (page - 1) * pagesize,
-          take: pagesize,
+          skip: (page - 1) * pageSize,
+          take: pageSize,
           where: {
             workflow:{userId: ctx.auth.user.id},
           },
@@ -70,14 +76,14 @@ export const executionsRouter = createTRPCRouter({
           },
         }),
       ]);
-      const totalPages = Math.ceil(totalCount / pagesize);
+      const totalPages = Math.ceil(totalCount / pageSize);
       const hasNextPage = page < totalPages;
       const hasPreviousPage = page > 1;
 
       return {
         items,
         page,
-        pagesize,
+        pageSize,
         totalCount,
         totalPages,
         hasNextPage,
