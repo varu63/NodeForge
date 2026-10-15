@@ -1,10 +1,14 @@
 "use client";
 
-import { z } from "zod";
-import { FcGoogle } from "react-icons/fc";
-import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {FaGithub } from "react-icons/fa";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { FaGithub } from "react-icons/fa";
+import { FcGoogle } from "react-icons/fc";
+import { toast } from "sonner";
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -15,10 +19,7 @@ import {
 } from "@/components/ui/card";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 
 const signInSchema = z.object({
   email: z.string().email({
@@ -42,19 +43,34 @@ export default function SignIn() {
   });
 
   const isPending = form.formState.isSubmitting;
- const signInGithub = async () => {
-  await authClient.signIn.social({
-    provider: "github",
-    callbackURL: "/",
-  });
-};
+  const [pendingProvider, setPendingProvider] = useState<"github" | "google" | null>(
+    null,
+  );
+  const isSocialPending = pendingProvider !== null;
 
-const signInGoogle = async () => {
-  await authClient.signIn.social({
-    provider: "google",
-    callbackURL: "/",
-  });
-};
+  const signInGithub = async () => {
+    setPendingProvider("github");
+    try {
+      await authClient.signIn.social({
+        provider: "github",
+        callbackURL: "/",
+      });
+    } finally {
+      setPendingProvider(null);
+    }
+  };
+
+  const signInGoogle = async () => {
+    setPendingProvider("google");
+    try {
+      await authClient.signIn.social({
+        provider: "google",
+        callbackURL: "/",
+      });
+    } finally {
+      setPendingProvider(null);
+    }
+  };
   async function onSubmit(values: SignInFormData) {
     await authClient.signIn.email(
       {
@@ -88,20 +104,26 @@ const signInGoogle = async () => {
               <Button
                 variant="outline"
                 className="w-full"
-                disabled={isPending}
+                disabled={isPending || isSocialPending}
                 type="button"
                 onClick={signInGithub}
               >
-                <FaGithub /> Sign in with Github
+                <FaGithub />{" "}
+                {pendingProvider === "github"
+                  ? "Redirecting..."
+                  : "Sign in with Github"}
               </Button>
               <Button
                 variant="outline"
                 className="w-full"
-                disabled={isPending}
+                disabled={isPending || isSocialPending}
                 type="button"
                  onClick={signInGoogle}
               >
-                <FcGoogle /> Sign in with Google
+                <FcGoogle />{" "}
+                {pendingProvider === "google"
+                  ? "Redirecting..."
+                  : "Sign in with Google"}
               </Button>
             </div>
             <Controller
@@ -148,7 +170,11 @@ const signInGoogle = async () => {
               )}
             />
 
-            <Button type="submit" className="w-full" disabled={isPending}>
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={isPending || isSocialPending}
+            >
               {isPending ? "Signing In..." : "Sign In"}
             </Button>
             <div className="text-sm text-center">
